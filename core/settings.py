@@ -57,7 +57,7 @@ THIRD_PARTY_APPS = [
     'rest_framework_swagger',
 ]
 
-INSTALLED_APPS = INBUILD_APPS + LOCAL_APPS
+INSTALLED_APPS = INBUILD_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

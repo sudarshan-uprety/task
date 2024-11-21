@@ -51,5 +51,6 @@ urlpatterns = [
     # api for each apps.
     path('api/v1/user/', include('apps.users.urls')),
     path('api/v1/events/', include('apps.events.urls')),
+    # path('api/v1/booking/', include('apps.events.urls')),
 
 ]
