@@ -6,7 +6,11 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 
-from apps.events.serializers import EventRetrieveSerializer, EventCreateSerializer, EventUpdateSerializer
+from apps.events.serializers import (
+    EventRetrieveSerializer,
+    EventCreateSerializer,
+    EventUpdateSerializer
+)
 from apps.events.models import Event
 from apps.common.permissions import IsAdminOrReadOnly
 from utils.response import CustomResponse
@@ -17,7 +21,7 @@ class EventListView(APIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
     def get(self, request):
-        queryset = Event.objects.filter(date__gte=timezone.now().date())
+        queryset = Event.objects.filter(date__gte=timezone.now().date()).order_by('-date')
 
         serializer = EventRetrieveSerializer(queryset, many=True)
 
@@ -97,7 +101,6 @@ class EventDetailView(APIView):
                 status_code=status.HTTP_404_NOT_FOUND
             )
 
-        # Check if event has any bookings
         if instance.bookings.exists():
             return CustomResponse.error(
                 message="Cannot delete event with existing bookings",

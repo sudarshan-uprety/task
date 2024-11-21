@@ -9,7 +9,7 @@ class UserTicket(BaseModel):
         ('available', 'Available'),
         ('booked', 'Booked')
     )
-    booking = models.ForeignKey(Booking, on_delete=models.PROTECT)
+    booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name='user_tickets')
     status = models.CharField(
         max_length=10, choices=ACTION_TYPES, default='available'
     )

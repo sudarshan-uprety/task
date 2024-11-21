@@ -75,3 +75,9 @@ class TokenRefreshSerializer(serializers.Serializer):
         attrs['refresh'] = str(token)
 
         return attrs
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'full_name', 'email']
