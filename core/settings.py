@@ -48,6 +48,7 @@ LOCAL_APPS = [
     'apps.common',
     'apps.events',
     'apps.booking',
+    'apps.tickets',
 ]
 
 THIRD_PARTY_APPS = [
