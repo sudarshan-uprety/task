@@ -12,22 +12,22 @@ from apps.users.models import User
 class EventTests(APITestCase):
     def setUp(self):
         self.admin_user = User.objects.create_superuser(
-            full_name='admin',
-            email='admin@test.com',
-            password='testpass123'
+            full_name='Sudarshan Uprety',
+            email='no-reply@sudarshan-uprety.com.np',
+            password='itwillpass123'
         )
         self.normal_user = User.objects.create_user(
-            full_name='user',
-            email='user@test.com',
-            password='testpass123'
+            full_name='Suds Uprety',
+            email='admin@sudarshan-uprety.com.np',
+            password='thismustnotpass123'
         )
 
         # Create test event
         self.event = Event.objects.create(
-            title='Test Event',
-            description='Test Description',
+            title='Australia Event Test',
+            description='Students test',
             date=timezone.now().date() + timezone.timedelta(days=10),
-            location='Test Location',
+            location='Putalisadak',
             total_tickets=100
         )
 
@@ -44,11 +44,11 @@ class EventTests(APITestCase):
         """Test creating event as admin user"""
         self.client.force_authenticate(user=self.admin_user)
         payload = {
-            'title': 'New Event',
-            'description': 'New Description',
+            'title': 'Sungava College Fest',
+            'description': 'Welcome and farewell by Sungava College.',
             'date': (timezone.now().date() + timezone.timedelta(days=5)).isoformat(),
-            'location': 'New Location',
-            'total_tickets': 50
+            'location': 'Hotel Seven Star, Sauraha Chitwan',
+            'total_tickets': 300
         }
         response = self.client.post(reverse('event-list'), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -58,11 +58,11 @@ class EventTests(APITestCase):
         """Test creating event as normal user it must fails"""
         self.client.force_authenticate(user=self.normal_user)
         payload = {
-            'title': 'New Event',
-            'description': 'New Description',
+            'title': 'Sungava College Fest',
+            'description': 'Welcome and farewell by Sungava College.',
             'date': (timezone.now().date() + timezone.timedelta(days=5)).isoformat(),
-            'location': 'New Location',
-            'total_tickets': 50
+            'location': 'Hotel Seven Star, Sauraha Chitwan',
+            'total_tickets': 300
         }
         response = self.client.post(reverse('event-list'), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -71,7 +71,6 @@ class EventTests(APITestCase):
         """Test deleting event that has bookings it must fail"""
         self.client.force_authenticate(user=self.admin_user)
 
-        # Create a booking for the event
         Booking.objects.create(
             user=self.normal_user,
             event=self.event,
