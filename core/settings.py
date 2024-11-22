@@ -55,7 +55,6 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'drf_yasg',
     'rest_framework.authtoken',
-    'rest_framework_swagger',
 ]
 
 INSTALLED_APPS = INBUILD_APPS + LOCAL_APPS + THIRD_PARTY_APPS
