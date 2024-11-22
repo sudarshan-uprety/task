@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from django.utils import timezone
+from django.db.models import F, Q
+from django.db import transaction
+
 
 from apps.booking.models import Booking
 from apps.users.serializers import UserDetailSerializer
@@ -10,6 +13,7 @@ from apps.events.serializers import EventRetrieveSerializer
 class BookingCreateSerializer(serializers.ModelSerializer):
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
     user = UserDetailSerializer(read_only=True)
+
     class Meta:
         model = Booking
         fields = ['event', 'user', 'booking_date', 'status']
@@ -25,12 +29,24 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         if not event:
             raise serializers.ValidationError({"event": "Event is required"})
 
-        booked_tickets = Booking.objects.filter(event=event, status=True).count()
-        if booked_tickets >= event.total_tickets:
-            raise serializers.ValidationError({"event": "No tickets available for this event"})
+        with transaction.atomic():
+            event = Event.objects.select_for_update(of=('self',)).get(id=event.id)
 
-        data['booking_date'] = timezone.now().date()
-        data['status'] = True
+            booked_tickets = Booking.objects.filter(
+                event=event,
+                status=True
+            ).count()
+
+            if booked_tickets >= event.total_tickets:
+                raise serializers.ValidationError({"event": "No tickets available"})
+
+            Event.objects.filter(
+                id=event.id,
+                total_tickets__gt=booked_tickets
+            ).update(total_tickets=F('total_tickets') - 1)
+
+            data['booking_date'] = timezone.now().date()
+            data['status'] = True
 
         return data
 
