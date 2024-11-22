@@ -22,7 +22,6 @@ class EventTests(APITestCase):
             password='thismustnotpass123'
         )
 
-        # Create test event
         self.event = Event.objects.create(
             title='Australia Event Test',
             description='Students test',
