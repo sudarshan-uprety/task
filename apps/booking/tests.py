@@ -76,7 +76,6 @@ class BookingTests(APITestCase):
                     'booking_date': timezone.now().date().isoformat()
                 })
 
-        # Simulate two concurrent bookings
         with patch('django.db.transaction.on_commit', lambda f: f()):
             response1 = create_booking()
             response2 = create_booking()
