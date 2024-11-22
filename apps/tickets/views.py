@@ -99,7 +99,6 @@ class UserTicketDetailView(APIView):
                 status_code=status.HTTP_404_NOT_FOUND
             )
 
-        # Prevent deleting booked tickets
         if instance.status == 'booked':
             return CustomResponse.error(
                 message="Cannot delete a booked ticket",

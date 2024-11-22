@@ -20,7 +20,6 @@ class UserTicketCreateSerializer(serializers.ModelSerializer):
         if not booking:
             raise serializers.ValidationError({"booking": "Booking is required"})
 
-        # Check if ticket already exists
         if UserTicket.objects.filter(booking=booking, status='booked').exists():
             raise serializers.ValidationError({"booking": "Ticket already exists for this booking"})
 

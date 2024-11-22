@@ -30,9 +30,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['email', 'full_name', 'password', 'confirm_password']
 
     def validate_email(self, value):
-        """
-        Validate email after other validations are complete
-        """
         if User.objects.filter(email=value).exists():
             raise ConflictException({
                 "email": ["Email already registered."]
@@ -40,9 +37,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        """
-        Validate password match 
-        """
         if attrs['password'] != attrs.pop('confirm_password'):
             raise ValidationError({
                 "confirm_password": "Passwords do not match."
@@ -70,7 +64,6 @@ class TokenRefreshSerializer(serializers.Serializer):
         refresh_token = attrs['refresh']
         token = RefreshToken(refresh_token)
 
-        # Generate new access token
         attrs['access'] = str(token.access_token)
         attrs['refresh'] = str(token)
 
