@@ -26,3 +26,4 @@ whitenoise==6.5.0
 gunicorn==21.2.0
 unicorn==2.0.1
 uvicorn==0.27.0.post1
+fpdf==1.7.2
