@@ -1,0 +1,88 @@
+<!-- templates/booking_mail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .event-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Booking Confirmation</h1>
+    </div>
+
+    <div class="content">
+        <p>Dear {{ user }},</p>
+
+        <p>Thank you for booking your place at <strong>{{ event.title }}</strong>. Your booking has been confirmed!</p>
+
+        <div class="event-details">
+            <h3>Event Details:</h3>
+            <p><strong>Event:</strong> {{ event.title }}</p>
+            <p><strong>Date:</strong> {{ event_date }}</p>
+            <p><strong>Booking Reference:</strong> {{ booking.id }}</p>
+            <p><strong>Booking Date:</strong> {{ booking_date }}</p>
+        </div>
+
+        {% if event.location %}
+        <div class="event-details">
+            <h3>Location:</h3>
+            <p>{{ event.location }}</p>
+        </div>
+        {% endif %}
+
+        {% if event.description %}
+        <div class="event-details">
+            <h3>Event Description:</h3>
+            <p>{{ event.description }}</p>
+        </div>
+        {% endif %}
+
+        <p>If you need to make any changes to your booking or have any questions, please don't hesitate to contact us.</p>
+    </div>
+
+    <div class="footer">
+        <p>This is an automated email, please do not reply directly to this message.</p>
+    </div>
+</body>
+</html>

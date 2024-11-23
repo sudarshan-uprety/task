@@ -1,5 +1,6 @@
 from django.utils import timezone
-from django.test import TestCase
+from django.http import HttpResponse, FileResponse
+from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -13,7 +14,10 @@ from apps.booking.serializers import (
     BookingRetrieveSerializer,
     BookingUpdateSerializer
 )
+
 from utils.response import CustomResponse
+from utils.email import send_booking_confirmation
+from utils.pdf import BookingPDF
 
 
 class BookingListView(APIView):
@@ -42,7 +46,8 @@ class BookingListView(APIView):
         serializer = BookingCreateSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            booking = serializer.save()
+            send_booking_confirmation(booking=booking)
             return CustomResponse.success(
                 message="Booking created successfully",
                 data=serializer.data,
@@ -120,3 +125,41 @@ class BookingDetailView(APIView):
             message="Booking cancelled successfully",
             status_code=status.HTTP_200_OK
         )
+
+
+class BookingPDFDownloadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        booking = get_object_or_404(Booking, id=pk, user=self.request.user)
+        return booking
+
+    def get(self, request, pk):
+        booking = self.get_object(pk)
+        pdf = BookingPDF()
+        pdf.add_page()
+
+        pdf.set_font('Arial', 'B', 16)
+        pdf.cell(0, 10, f'Booking Reference: #{booking.id}', ln=True)
+        pdf.ln(10)
+
+        pdf.set_font('Arial', 'B', 14)
+        pdf.cell(0, 10, 'Event Details', ln=True)
+        pdf.set_font('Arial', '', 12)
+        pdf.cell(0, 10, f'Event: {booking.event}', ln=True)
+        pdf.cell(0, 10, f'Date: {booking.booking_date}', ln=True)
+        pdf.cell(0, 10, f'Status: {"Active" if booking.status else "Inactive"}', ln=True)
+        pdf.ln(10)
+
+        pdf.set_font('Arial', 'B', 14)
+        pdf.cell(0, 10, 'User Information', ln=True)
+        pdf.set_font('Arial', '', 12)
+        pdf.cell(0, 10, f'Name: {booking.user.full_name}', ln=True)
+        pdf.cell(0, 10, f'Email: {booking.user.email}', ln=True)
+
+        pdf_content = pdf.output(dest='S').encode('latin1')
+
+        response = HttpResponse(pdf_content, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="booking_{booking.id}.pdf"'
+
+        return response
