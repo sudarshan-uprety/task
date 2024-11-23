@@ -27,7 +27,7 @@ from utils import env
 SECRET_KEY = 'django-insecure-j07fc$y-8-8@y3m$h=%0r^eug+4ik7^^ze*2u@-84jn-v++l_8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -139,6 +139,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # user model
 AUTH_USER_MODEL = 'users.User'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://khalti.sudarshan-uprety.com.np"
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
