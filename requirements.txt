@@ -27,3 +27,4 @@ gunicorn==21.2.0
 unicorn==2.0.1
 uvicorn==0.27.0.post1
 fpdf==1.7.2
+django-jazzmin==2.6.0

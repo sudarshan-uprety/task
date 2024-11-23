@@ -35,7 +35,7 @@ class BookingListView(APIView):
             ).select_related(
                 'event', 'user'
             ).order_by('-booking_date')
-        serializer = BookingRetrieveSerializer(queryset, many=True)
+        serializer = BookingCreateSerializer(queryset, many=True)
         return CustomResponse.success(
             message="Bookings retrieved successfully",
             data=serializer.data,
