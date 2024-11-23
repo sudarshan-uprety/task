@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework import status
 from rest_framework.views import exception_handler
@@ -34,6 +35,13 @@ def custom_exception_handler(exc, context):
         return CustomResponse.error(
             message="Validation failed",
             errors=exc.detail,
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
+
+    if isinstance(exc, DjangoValidationError):
+        return CustomResponse.error(
+            message="Validation failed",
+            errors=exc.messages,
             status_code=status.HTTP_400_BAD_REQUEST
         )
 

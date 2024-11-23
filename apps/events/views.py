@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
@@ -18,11 +19,21 @@ from utils.response import CustomResponse
 
 class EventListView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+    def apply_filter(self, request, queryset):
+        date = request.query_params.get('date')
+        location = request.query_params.get('location')
+
+        if date:
+            queryset = queryset.filter(date=date)
+        if location:
+            queryset = queryset.filter(location__icontains=location)
+
+        return queryset.order_by('-date')
 
     def get(self, request):
         queryset = Event.objects.filter(date__gte=timezone.now().date()).order_by('-date')
-
+        queryset = self.apply_filter(request, queryset)
         serializer = EventRetrieveSerializer(queryset, many=True)
 
         return CustomResponse.success(
